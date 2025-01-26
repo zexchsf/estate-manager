@@ -1,3 +1,5 @@
+# estate-manager"
+
 …or create a new repository on the command line
 echo "# estate-manager" >> README.md
 git init
