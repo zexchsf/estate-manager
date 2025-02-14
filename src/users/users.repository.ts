@@ -20,8 +20,8 @@ export class UsersRepository {
       if (!user) {
         user = new this.userModel({
           email: decodedToken.email,
-          name: decodedToken.name,
-          phone: decodedToken.phone_number,
+          // name: decodedToken.name,
+          // phone: decodedToken.phone_number,
           role: 'user',
         });
         await user.save();

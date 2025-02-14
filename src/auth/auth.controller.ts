@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { firebaseAuth } from './firebase-admin';
+import { FirebaseAuthGuard } from './firebase-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,7 @@ export class AuthController {
   async signup(@Body('idToken') idToken: string) {
     try {
       const decodedToken = await firebaseAuth.verifyIdToken(idToken);
-
+      console.log('Decoded Token:', decodedToken);
       return this.usersService.findOrCreateUser(decodedToken);
     } catch (error) {
       throw new Error('Invalid Firebase ID token');
@@ -43,12 +44,14 @@ export class AuthController {
   }
 
   @Post('session-logout')
+  @UseGuards(FirebaseAuthGuard)
   async sessionLogout(@Res() res: Response) {
     res.clearCookie('session');
     res.send({ success: true });
   }
 
   @Post('verify-session')
+  @UseGuards(FirebaseAuthGuard)
   async verifySession(@Req() req: Request) {
     const sessionCookie = req.cookies.session;
     if (!sessionCookie) {
