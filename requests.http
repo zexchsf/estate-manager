@@ -1,0 +1,45 @@
+### Sign UP
+POST http://localhost:3000/auth/signup
+Authorization: Bearer: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjBjYmJiZDI2NjNhY2U4OTU4YTFhOTY4ZmZjNDQxN2U4MDEyYmVmYmUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZXN0YXRlLW1hbmFnZXIyMDI1IiwiYXVkIjoiZXN0YXRlLW1hbmFnZXIyMDI1IiwiYXV0aF90aW1lIjoxNzM5NDc5NDk1LCJ1c2VyX2lkIjoiVnU3NWpuajFZdlRibjZmejRaS3pPVWRsb3ZFMyIsInN1YiI6IlZ1NzVqbmoxWXZUYm42Zno0Wkt6T1VkbG92RTMiLCJpYXQiOjE3Mzk0Nzk0OTUsImV4cCI6MTczOTQ4MzA5NSwiZW1haWwiOiJqb2hub21vdG9zaG8yMDAxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJqb2hub21vdG9zaG8yMDAxQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.yxagZ9EoiJTwzhbiYoUhs18HIXLUMDNlqWZVlVexMTRW3biqJKV_GPQnURQfFdRKob6due2-c_eI_IKQ6pfx7tb77N4jDN1ujciZ2FsfoohDnTUK6OlzfxSCUl9fp0I3ytD5fAW_rHUlUVXGeMXckNtr1ajvgCgTR01YrU2NeHIfkIvHJBbS8SJOWEc3PoXjUyywxdkNoKYSbYA6KXHdqzdm9aOaIDPDamCbq9IzmQkYpR0CZeAMPa2xezITlzA9iN8KqIlbapomItuRlSTZp6nVdNfJW7BN1QiAzsgg9LJM-A8Nody9p9iEsWaHGCnEnLrDFOe6RJ5vjv75fHDk3Q"
+
+
+### Email login
+
+POST http://localhost:3000/auth/email-login
+Content-Type: application/json
+
+{
+    "email": "johnomotosho2001@gmail.com"
+}
+
+
+### Session login
+
+POST http://localhost:3000/auth/session-login
+Content-Type: application/json
+
+{
+    "idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjBjYmJiZDI2NjNhY2U4OTU4YTFhOTY4ZmZjNDQxN2U4MDEyYmVmYmUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZXN0YXRlLW1hbmFnZXIyMDI1IiwiYXVkIjoiZXN0YXRlLW1hbmFnZXIyMDI1IiwiYXV0aF90aW1lIjoxNzM5NDc5NDk1LCJ1c2VyX2lkIjoiVnU3NWpuajFZdlRibjZmejRaS3pPVWRsb3ZFMyIsInN1YiI6IlZ1NzVqbmoxWXZUYm42Zno0Wkt6T1VkbG92RTMiLCJpYXQiOjE3Mzk0Nzk0OTUsImV4cCI6MTczOTQ4MzA5NSwiZW1haWwiOiJqb2hub21vdG9zaG8yMDAxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJqb2hub21vdG9zaG8yMDAxQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.yxagZ9EoiJTwzhbiYoUhs18HIXLUMDNlqWZVlVexMTRW3biqJKV_GPQnURQfFdRKob6due2-c_eI_IKQ6pfx7tb77N4jDN1ujciZ2FsfoohDnTUK6OlzfxSCUl9fp0I3ytD5fAW_rHUlUVXGeMXckNtr1ajvgCgTR01YrU2NeHIfkIvHJBbS8SJOWEc3PoXjUyywxdkNoKYSbYA6KXHdqzdm9aOaIDPDamCbq9IzmQkYpR0CZeAMPa2xezITlzA9iN8KqIlbapomItuRlSTZp6nVdNfJW7BN1QiAzsgg9LJM-A8Nody9p9iEsWaHGCnEnLrDFOe6RJ5vjv75fHDk3Q"
+}
+
+### Get user
+
+GET http://localhost:3000/users
+Content-Length: application/json
+
+{
+    "email":"johnomotosho@gmail.com",
+    "name" : "JOHN",
+    "phone": "07031078790"
+}
+
+
+### Create Estate
+
+POST http://localhost:3000/estates/create
+Content-Type: application/json
+
+{
+    "name": "Green Valley Estate",
+    "ownerId": "1"
+}
