@@ -20,6 +20,6 @@ async function bootstrap() {
   mongoose.connection.once('open', () => {
     console.log('✅ Connected to MongoDB');
   });
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3100);
 }
 bootstrap();

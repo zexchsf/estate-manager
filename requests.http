@@ -1,5 +1,5 @@
 ### Sign UP
-POST http://localhost:3000/auth/signup
+POST http://localhost:3100/auth/signup
 Content-Type: application/json
 
 {
@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 ### Email login
 
-POST http://localhost:3000/auth/email-login
+POST http://localhost:3100/auth/email-login
 Content-Type: application/json
 
 {
@@ -18,7 +18,7 @@ Content-Type: application/json
 
 ### Session login
 
-POST http://localhost:3000/auth/session-login
+POST http://localhost:3100/auth/session-login
 Content-Type: application/json
 
 {
@@ -27,28 +27,28 @@ Content-Type: application/json
 
 ### Get user
 
-GET http://localhost:3000/users
+GET http://localhost:3100/users
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjBjYmJiZDI2NjNhY2U4OTU4YTFhOTY4ZmZjNDQxN2U4MDEyYmVmYmUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZXN0YXRlLW1hbmFnZXIyMDI1IiwiYXVkIjoiZXN0YXRlLW1hbmFnZXIyMDI1IiwiYXV0aF90aW1lIjoxNzM5OTU1MTEyLCJ1c2VyX2lkIjoidmw3VWhnYllXdmN2WERqTE1LWFlFSXF4YVVYMiIsInN1YiI6InZsN1VoZ2JZV3ZjdlhEakxNS1hZRUlxeGFVWDIiLCJpYXQiOjE3Mzk5NTUxMTIsImV4cCI6MTczOTk1ODcxMiwiZW1haWwiOiJuZXdAZW1haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbIm5ld0BlbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.Oh9jaJNo0Rdg6M9d-FwyGA2KZmqcAynzUgDxHRt4gWMKrqPpW-hk0axS2-gwzYKXB--oqyrhs89MmnUXmYxIVoN8muDdW2VLDRF-bE6m4BL7IdkUNdasNl_X-EApXreIRypn88Tz832EKmdnOB4AZC86z-AIbmPeKbu8g1YjlDxGBig2HtLqk6fe3vq5vm2Rh3WhSYN7PTMvUlXcmnyqZxtJSkiS4ULRVK3DZEgIsq9lLfykpGgW7V19Nlmtmhy0fL8DimjVtQtZ2QQxXd-ofpDQallttt_DH9hFfbvtPxZADR1GW7t32ulRE4xk0i-7OJJUvc6muz_RySzgwvG6WA
 
 
 
 ### Create Estate
 
-POST http://localhost:3000/estates/create
+POST http://localhost:3100/estates/create
 Content-Type: application/json
 
 {
-    "name": "Unity Estate",
-    "ownerId": "2"
+    "name": "Peace Estate",
+    "ownerId": "3"
 }
 
 ### Query database
-GET http://localhost:3000/ai/query-database?model=chatgpt&query=Find%20all%20users%20who%20registered%20in%20the%20last%207%20days
+GET http://localhost:3100/ai/query-database?model=chatgpt&query=Find%20all%20users%20who%20registered%20in%20the%20last%207%20days
 
 
 ### Analyze industry trends
-GET http://localhost:3000/ai/analyze-trends?model=chatgpt&prompt=The%20Future%20of%20AI%20in%20Healthcare
+GET http://localhost:3100/ai/analyze-trends?model=chatgpt&prompt=The%20Future%20of%20AI%20in%20Healthcare
 
 
 ###Search web
-GET http://localhost:3000/ai/search-web?query=Latest%20AI%20trends%202025
+GET http://localhost:3100/ai/search-web?query=Latest%20AI%20trends%202025
