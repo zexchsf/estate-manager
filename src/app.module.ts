@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { EstatesModule } from './estates/estates.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     AuthModule,
     EstatesModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

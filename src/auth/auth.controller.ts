@@ -16,9 +16,6 @@ export class AuthController {
   async signup(@Body('idToken') idToken: string) {
     try {
       const decodedToken = await firebaseAuth.verifyIdToken(idToken);
-      // Temprary just for debugging
-      console.log('Decoded Token:', decodedToken);
-      //ends here
       return this.usersService.findOrCreateUser(decodedToken);
     } catch (error) {
       throw new Error('Invalid Firebase ID token');
