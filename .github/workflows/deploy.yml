@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
@@ -28,7 +28,7 @@ jobs:
       - name: Package the app
         run: |
           mkdir -p deployment
-          cp -r dist package.json package-lock.json ecosystem.config.js .env deployment/
+          cp -r dist package.json package-lock.json  deployment/
 
       - name: Deploy to Linode
         uses: appleboy/scp-action@master
@@ -64,7 +64,7 @@ jobs:
 
             # Restart PM2 with correct process
             pm2 delete estateapi || true
-            pm2 start ecosystem.config.js --env production
+            pm2 start estateapi
             pm2 save
 
             # Confirm PM2 status
