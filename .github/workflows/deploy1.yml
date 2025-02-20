@@ -32,20 +32,8 @@ jobs:
           key: ${{ secrets.LINODE_SSH_KEY }}
           port: ${{ secrets.LINODE_SSH_PORT }}
           script: |
-            # Create the directory if it doesn't exist
-            mkdir -p /var/www/estateapi
-
-            # Copy all files (including root files) to the server
-            rsync -avz --delete . ${{ secrets.LINODE_USER }}@${{ secrets.LINODE_HOST }}:/var/www/estateapi --exclude node_modules --exclude .git
-
-            # Navigate to the app directory
             cd /var/www/estateapi
-
-            # Install dependencies
-            npm install --production
-
-            # Build the app
+            git pull origin main
+            npm install
             npm run build
-
-            # Reload or start the PM2 process
-            pm2 reload dist/main.js --name estateapi || pm2 start dist/main.js --name estateapi
+            pm2 restart estateapi || pm2 start dist/main.js --name estateapi
