@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/users/users.schema';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class AiService {
@@ -17,11 +19,33 @@ export class AiService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
+  private loadApiKeys(): { OPENAI_API_KEY: string; DEEPSEEK_API_KEY: string } {
+    try {
+      const filePath = path.join(process.env.HOME || '~', 'tokens/aikeys.json');
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const jsonData = JSON.parse(fileContent);
+
+      return {
+        OPENAI_API_KEY: jsonData.OPENAI_API_KEY || '',
+        DEEPSEEK_API_KEY: jsonData.DEEPSEEK_API_KEY || '',
+      };
+    } catch (error) {
+      console.error('Error reading API Keys:', error);
+      return { OPENAI_API_KEY: '', DEEPSEEK_API_KEY: '' }; // Return empty strings if there's an error
+    }
+  }
+
   async queryAiModel(model: string, prompt: string): Promise<any> {
+    // const apiKey =
+    //   model === 'chatgpt'
+    //     ? this.configService.get<string>('OPENAI_API_KEY') //Read from .env
+    //     : this.loadDeepSeekApiKey(); // Read from JSON file
+
+    const apiKeys = this.loadApiKeys(); // Load API keys from JSON file
+
+    //Fetch API key based on the model
     const apiKey =
-      model === 'chatgpt'
-        ? this.configService.get<string>('OPENAI_API_KEY')
-        : this.configService.get<string>('DEEPSEEK_API_KEY');
+      model === 'chatgpt' ? apiKeys.OPENAI_API_KEY : apiKeys.DEEPSEEK_API_KEY;
 
     const apiUrl =
       model === 'chatgpt' ? this.chatGptApiUrl : this.deepSeekApiUrl;
