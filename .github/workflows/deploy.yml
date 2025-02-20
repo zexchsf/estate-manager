@@ -30,7 +30,7 @@ jobs:
           host: ${{ secrets.LINODE_HOST }}
           username: ${{ secrets.LINODE_USER }}
           key: ${{ secrets.LINODE_SSH_KEY }}
-          port: 2525
+          port: ${{ secrets.LINODE_SSH_PORT }}
           script: |
             cd /var/www/estateapi
             git pull origin main
