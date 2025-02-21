@@ -1,4 +1,13 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
 import { UsersService } from 'src/users/users.service';
@@ -18,27 +27,51 @@ export class AuthController {
       const decodedToken = await firebaseAuth.verifyIdToken(idToken);
       return this.usersService.findOrCreateUser(decodedToken);
     } catch (error) {
-      throw new Error('Invalid Firebase ID token');
+      throw new HttpException(
+        'Invalid Firebase ID token',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
   }
 
   @Post('email-login')
   async emailLogin(@Body('email') email: string) {
-    return this.authService.sendLoginCode(email);
+    try {
+      return await this.authService.sendLoginCode(email);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to send login code',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Post('session-login')
   async sessionLogin(@Body('idToken') idToken: string, @Res() res: Response) {
-    const sessionCookie = await this.authService.createSessionCookie(idToken);
-    res.cookie('session', sessionCookie, { httpOnly: true, secure: true });
-    res.send({ success: true });
+    try {
+      const sessionCookie = await this.authService.createSessionCookie(idToken);
+      res.cookie('session', sessionCookie, { httpOnly: true, secure: true });
+      res.send({ success: true });
+    } catch (error) {
+      throw new HttpException(
+        'Failed to create session cookie',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Post('session-logout')
   @UseGuards(FirebaseAuthGuard)
   async sessionLogout(@Res() res: Response) {
-    res.clearCookie('session');
-    res.send({ success: true });
+    try {
+      res.clearCookie('session');
+      res.send({ success: true });
+    } catch (error) {
+      throw new HttpException(
+        'Failed to clear session cookie',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Post('verify-session')
