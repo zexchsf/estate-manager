@@ -1,9 +1,9 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { EstatesService } from './estates.service';
 
 @Controller('estates')
 export class EstatesController {
-  constructor(private readonly estatesService: EstatesService) {}
+  constructor(private readonly estatesService: EstatesService) { }
 
   // Create a new estate
   @Post('create')
@@ -21,5 +21,10 @@ export class EstatesController {
     @Body('userId') userId: string,
   ) {
     return this.estatesService.addResident(estateId, userId);
+  }
+
+  @Get()
+  async getEstates() {
+    return 'Torama Estates'
   }
 }
