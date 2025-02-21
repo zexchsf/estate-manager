@@ -24,6 +24,6 @@ async function bootstrap() {
     console.log('✅ Connected to MongoDB');
   });
 
-  await app.listen(3300, '0.0.0.0');
+  await app.listen(3400, '0.0.0.0');
 }
 bootstrap();
