@@ -28,7 +28,7 @@ jobs:
       - name: Package the app
         run: |
           mkdir -p deployment
-          cp -r dist package.json package-lock.json  deployment/
+          cp -r dist package.json package-lock.json deployment/
 
       - name: Deploy to Linode
         uses: appleboy/scp-action@master
@@ -37,8 +37,8 @@ jobs:
           username: ${{ secrets.LINODE_USER }}
           key: ${{ secrets.LINODE_SSH_KEY }}
           port: 2525
-          source: "deployment/"
-          target: "/var/www/estateapi"
+          source: 'deployment/'
+          target: '/var/www/estateapi'
 
       - name: Restart App on Linode
         uses: appleboy/ssh-action@master
@@ -50,9 +50,6 @@ jobs:
           script: |
             cd /var/www/estateapi
 
-            # Ensure correct file permissions
-            chmod -R 755 .
-
             # Use node 22
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -62,10 +59,11 @@ jobs:
             # Install dependencies
             npm install --omit=dev
 
-            # Restart PM2 with correct process
-            pm2 delete estateapi || true
-            pm2 start estateapi
-            pm2 save
+            # Build the app again
+            npm run build
+
+            # Restart the app with PM2
+            pm2 restart 0
 
             # Confirm PM2 status
             pm2 status
