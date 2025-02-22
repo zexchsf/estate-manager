@@ -34,6 +34,7 @@ export class UsersRepository {
   // }
 
   async findOrCreate(decodedToken: any): Promise<UserDocument> {
+    console.log(this.userModel.db.readyState); // Should be 1 if connected
     try {
       let user = await this.userModel
         .findOne({ email: decodedToken.email })
@@ -53,6 +54,7 @@ export class UsersRepository {
 
       return user;
     } catch (error) {
+      console.error('Error in findOrCreate:', error);
       throw new InternalServerErrorException('Error in findOrCreateUser');
     }
   }

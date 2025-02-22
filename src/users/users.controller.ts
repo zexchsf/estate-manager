@@ -4,11 +4,12 @@ import { FirebaseAuthGuard } from 'src/auth/firebase-auth.guard';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   async getProfile(@Req() req) {
-    console.log('Users api')
+    console.log('Users api');
+    console.log('req.user:', req.user);
     return this.usersService.findOrCreateUser(req.user);
   }
 }
