@@ -21,7 +21,7 @@ export class AuthService {
   async sendLoginCode(email: string) {
     try {
       const link = await firebaseAuth.generateSignInWithEmailLink(email, {
-        url: process.env.FRONTEND_URL as string,
+        url: 'https://estateapi.torama.ng', //process.env.FRONTEND_URL as string,
         handleCodeInApp: true,
       });
       return { email, link };
