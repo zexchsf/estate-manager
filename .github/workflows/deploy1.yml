@@ -1,4 +1,4 @@
-name: Deploy Estate Management App
+name: Deploy to Estate Management App
 
 on:
   push:
@@ -6,34 +6,64 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22
+          cache: 'npm'
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
 
-      - name: Build the App
+      - name: Build the app
         run: npm run build
 
-      - name: Deploy to Server via SSH
+      - name: Package the app
+        run: |
+          mkdir -p deployment
+          cp -r dist package.json package-lock.json deployment/
+
+      - name: Deploy to Linode
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.LINODE_HOST }}
+          username: ${{ secrets.LINODE_USER }}
+          key: ${{ secrets.LINODE_SSH_KEY }}
+          port: 2525
+          source: 'deployment/'
+          target: '/var/www/estateapi'
+
+      - name: Restart App on Linode
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.LINODE_HOST }}
           username: ${{ secrets.LINODE_USER }}
           key: ${{ secrets.LINODE_SSH_KEY }}
-          port: ${{ secrets.LINODE_SSH_PORT }}
+          port: 2525
           script: |
             cd /var/www/estateapi
-            git pull origin main
-            npm install
+
+            # Use node 22
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 22
+            node -v  # Verify Node.js 22 is being used
+
+            # Install dependencies
+            npm install --omit=dev
+
+            # Build the app again
             npm run build
-            pm2 restart estateapi || pm2 start dist/main.js --name estateapi
+
+            # Restart the app with PM2
+            pm2 restart 0
+
+            # Confirm PM2 status
+            pm2 status
