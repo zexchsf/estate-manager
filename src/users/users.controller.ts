@@ -7,6 +7,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @UseGuards(FirebaseAuthGuard)
   async getProfile(@Req() req) {
     console.log('Users api');
     console.log('req.user:', req.user);

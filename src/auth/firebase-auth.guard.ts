@@ -1,12 +1,28 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { firebaseAuth } from './firebase-admin';
 
 @Injectable()
-export class FirebaseAuthGuard extends AuthGuard('firebase') {
-  handleRequest(err, user, info) {
-    if (err || !user) {
-      throw new UnauthorizedException('Invalid Firebase Token');
+export class FirebaseAuthGuard implements CanActivate {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req = context.switchToHttp().getRequest();
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('No Firebase token found');
     }
-    return user;
+
+    const token = authHeader.split('Bearer ')[1];
+
+    try {
+      req.user = await firebaseAuth.verifyIdToken(token);
+      return true; // Token is valid, continue request
+    } catch (error) {
+      throw new UnauthorizedException('Invalid Firebase token');
+    }
   }
 }
