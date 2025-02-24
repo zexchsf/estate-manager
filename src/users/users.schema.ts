@@ -12,10 +12,13 @@ export class User {
   email: string;
 
   @Prop()
-  name: string;
+  password?: string;
 
   @Prop()
-  phone: string;
+  name?: string;
+
+  @Prop()
+  phone?: string;
 
   @Prop({ default: 'user' })
   role: string;

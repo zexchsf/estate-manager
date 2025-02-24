@@ -10,38 +10,55 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
-import { UsersService } from 'src/users/users.service';
-import { firebaseAuth } from './firebase-admin';
 import { FirebaseAuthGuard } from './firebase-auth.guard';
+import { EmailPasswordLoginDto } from 'src/users/dtos/email-password-login.dto';
+import { SocialAuthDto } from 'src/users/dtos/social-auth.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private usersService: UsersService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
-  @Post('signup')
-  async signup(@Body('idToken') idToken: string) {
+  @Post('email-signup')
+  async signup(@Body() emailPasswordLoginDto: EmailPasswordLoginDto) {
+    return this.authService.signup(
+      emailPasswordLoginDto.email,
+      emailPasswordLoginDto.password,
+    );
+  }
+
+  @Post('email-login')
+  async login(
+    @Body() emailPasswordLoginDto: EmailPasswordLoginDto,
+    @Res() res: Response,
+  ) {
+    const { user, token } = await this.authService.signin(
+      emailPasswordLoginDto.email,
+      emailPasswordLoginDto.password,
+    );
+    res.cookie('jwt', token, { httpOnly: true, secure: true });
+    return res.send({ success: true, user });
+  }
+
+  @Post('google-auth')
+  async googleAuth(@Body() socialAuthDto: SocialAuthDto) {
     try {
-      const decodedToken = await firebaseAuth.verifyIdToken(idToken);
-      return this.usersService.findOrCreateUser(decodedToken);
+      return await this.authService.verifyFirebaseToken(socialAuthDto.idToken);
     } catch (error) {
       throw new HttpException(
-        'Invalid Firebase ID token',
+        'Google authentication failed',
         HttpStatus.UNAUTHORIZED,
       );
     }
   }
 
-  @Post('email-login')
-  async emailLogin(@Body('email') email: string) {
+  @Post('facebook-auth')
+  async facebookAuth(@Body() socialAuthDto: SocialAuthDto) {
     try {
-      return await this.authService.sendLoginCode(email);
+      return await this.authService.verifyFirebaseToken(socialAuthDto.idToken);
     } catch (error) {
       throw new HttpException(
-        'Failed to send login code',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        'Facebook authentication failed',
+        HttpStatus.UNAUTHORIZED,
       );
     }
   }

@@ -4,7 +4,19 @@ import { User } from './users.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepository: UsersRepository) { }
+  constructor(private usersRepository: UsersRepository) {}
+
+  async create(userData: {
+    uid: string;
+    email: string;
+    password: string;
+  }): Promise<User> {
+    return this.usersRepository.create(userData);
+  }
+
+  async find(email: string): Promise<User | null> {
+    return this.usersRepository.find(email);
+  }
 
   async findOrCreateUser(decodedToken: any): Promise<User> {
     return this.usersRepository.findOrCreate(decodedToken);
