@@ -23,18 +23,14 @@ export class AuthService {
     if (existingUser) {
       throw new BadRequestException('Email already in use');
     }
-
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
     const user = await this.userService.create({
       uid: new mongoose.Types.ObjectId().toHexString(),
       email,
       password: hashedPassword,
     });
-
     const token = this.jwtService.sign({ email: user.email, id: user.uid });
-
     return { user, token };
   }
 
@@ -43,14 +39,11 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new BadRequestException('Incorrect password');
     }
-
     const token = this.jwtService.sign({ email: user.email, id: user.uid });
-
     return { user, token };
   }
 
@@ -58,7 +51,6 @@ export class AuthService {
     try {
       // Verify Firebase token
       const decodedToken = await firebaseAuth.verifyIdToken(idToken);
-
       // Find or create user
       return await this.userService.findOrCreateUser(decodedToken);
     } catch (error) {

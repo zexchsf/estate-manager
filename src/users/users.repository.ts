@@ -1,7 +1,12 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './users.schema';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersRepository {
@@ -44,6 +49,17 @@ export class UsersRepository {
       console.error('Error in findOrCreate:', error);
       throw new InternalServerErrorException('Error in findOrCreateUser');
     }
+  }
+
+  async findByUid(uid: string): Promise<User | null> {
+    return this.userModel.findOne({ uid }).exec();
+  }
+
+  async updatePassword(uid: string, newPassword: string): Promise<void> {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    await this.userModel.updateOne({ uid }, { password: hashedPassword });
   }
 
   async updateRole(userId: string, role: string) {

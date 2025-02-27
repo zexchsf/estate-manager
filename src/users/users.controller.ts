@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Put, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { FirebaseAuthGuard } from 'src/auth/firebase-auth.guard';
 import { HybridAuthGuard } from 'src/auth/hybrid-auth.guard';
@@ -13,5 +21,18 @@ export class UsersController {
     console.log('Users api');
     console.log('req.user:', req.user);
     return this.usersService.findOrCreateUser(req.user);
+  }
+
+  @Patch('change-password')
+  @UseGuards(HybridAuthGuard)
+  async changePassword(
+    @Req() req,
+    @Body() body: { oldPassword: string; newPassword: string },
+  ) {
+    return this.usersService.changePassword(
+      req.user.id,
+      body.oldPassword,
+      body.newPassword,
+    );
   }
 }
