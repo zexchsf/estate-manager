@@ -4,7 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { firebaseAuth } from './firebase-admin';
+import { firebaseAuth } from '../firebase-admin';
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 
@@ -26,7 +26,6 @@ export class HybridAuthGuard implements CanActivate {
     try {
       let decodedUser;
 
-      // First, try to verify it as a Firebase token
       try {
         decodedUser = await firebaseAuth.verifyIdToken(token);
         console.log('Firebase token verified:', decodedUser);

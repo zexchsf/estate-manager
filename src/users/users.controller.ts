@@ -8,15 +8,32 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { FirebaseAuthGuard } from 'src/auth/firebase-auth.guard';
-import { HybridAuthGuard } from 'src/auth/hybrid-auth.guard';
+import { FirebaseAuthGuard } from 'src/auth/guards/firebase-auth.guard';
+import { HybridAuthGuard } from 'src/auth/guards/hybrid-auth.guard';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { PromoteToManagerDto } from './dtos/promote-to-manger.dto';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @ApiBearerAuth()
   @UseGuards(HybridAuthGuard)
+  @ApiOperation({ summary: 'Get user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getProfile(@Req() req) {
     console.log('Users api');
     console.log('req.user:', req.user);
@@ -24,7 +41,12 @@ export class UsersController {
   }
 
   @Patch('change-password')
+  @ApiBearerAuth()
   @UseGuards(HybridAuthGuard)
+  @ApiOperation({ summary: 'Change user password' })
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid old password' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async changePassword(
     @Req() req,
     @Body() body: { oldPassword: string; newPassword: string },

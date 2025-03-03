@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { User } from './users.schema';
 import * as bcrypt from 'bcrypt';
@@ -40,9 +44,5 @@ export class UsersService {
     // Update password
     await this.usersRepository.updatePassword(id, newPassword);
     return 'Password changed successfully';
-  }
-
-  async promoteToMember(userId: string) {
-    return this.usersRepository.updateRole(userId, 'member');
   }
 }

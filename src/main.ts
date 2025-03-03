@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +25,15 @@ async function bootstrap() {
     console.log('✅ Connected to MongoDB');
   });
 
+  // Configure Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Estate Manager API')
+    .setDescription('API documentation for Estate Mamnagement App')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
   await app.listen(3400, '0.0.0.0');
 }
 bootstrap();
