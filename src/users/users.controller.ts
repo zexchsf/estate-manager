@@ -17,8 +17,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AdminGuard } from 'src/auth/guards/admin.guard';
-import { PromoteToManagerDto } from './dtos/promote-to-manger.dto';
 
 @ApiTags('Users')
 @Controller('users')
