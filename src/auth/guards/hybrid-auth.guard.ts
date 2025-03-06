@@ -7,11 +7,13 @@ import {
 import { firebaseAuth } from '../firebase-admin';
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
+import { UsersService } from 'src/users/users.service';
 
 dotenv.config();
 
 @Injectable()
 export class HybridAuthGuard implements CanActivate {
+  constructor(private userService: UsersService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
 
@@ -29,6 +31,14 @@ export class HybridAuthGuard implements CanActivate {
       try {
         decodedUser = await firebaseAuth.verifyIdToken(token);
         console.log('Firebase token verified:', decodedUser);
+        // Fetch or create the user in MongoDB
+        const user = await this.userService.findOrCreateUser(decodedUser);
+        req.user = {
+          id: user._id.toString(),
+          email: user.email,
+          role: user.role,
+        };
+        return true;
       } catch (firebaseError) {
         console.log('Not a Firebase token, trying JWT...');
       }

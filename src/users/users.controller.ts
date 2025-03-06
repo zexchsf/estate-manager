@@ -17,6 +17,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -54,5 +55,15 @@ export class UsersController {
       body.oldPassword,
       body.newPassword,
     );
+  }
+
+  @Patch('promote-to-admin')
+  @UseGuards(HybridAuthGuard, AdminGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'An admin promotes a user to admin' })
+  @ApiResponse({ status: 200, description: 'User promoted successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid email' })
+  async promoteUser(@Body('email') email: string) {
+    return this.usersService.promoteToAdmin(email);
   }
 }

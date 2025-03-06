@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { User, UserDocument } from './users.schema';
 import * as bcrypt from 'bcrypt';
 
@@ -12,11 +12,7 @@ import * as bcrypt from 'bcrypt';
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(userData: {
-    uid: string;
-    email: string;
-    password: string;
-  }): Promise<User> {
+  async create(userData: { email: string; password: string }): Promise<User> {
     const user = new this.userModel(userData);
     return user.save();
   }
@@ -34,7 +30,8 @@ export class UsersRepository {
 
       if (!user) {
         user = new this.userModel({
-          uid: decodedToken.uid || decodedToken.user_id,
+          _id: new mongoose.Types.ObjectId(),
+          uid: decodedToken.uid,
           email: decodedToken.email,
           name: decodedToken.name || 'Unknown',
           phone: decodedToken.phone_number || 'N/A',
@@ -44,22 +41,25 @@ export class UsersRepository {
         await user.save();
       }
 
-      return user;
+      return user.toObject();
     } catch (error) {
       console.error('Error in findOrCreate:', error);
       throw new InternalServerErrorException('Error in findOrCreateUser');
     }
   }
 
-  async findByUid(uid: string): Promise<User | null> {
-    return this.userModel.findOne({ uid }).exec();
+  async findById(userId: string): Promise<User | null> {
+    return this.userModel.findById(userId).exec();
   }
 
-  async updatePassword(uid: string, newPassword: string): Promise<void> {
+  async updatePassword(userId: string, newPassword: string): Promise<void> {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-    await this.userModel.updateOne({ uid }, { password: hashedPassword });
+    await this.userModel.updateOne(
+      { _id: userId },
+      { password: hashedPassword },
+    );
   }
 
   async updateRole(userId: string, role: string) {

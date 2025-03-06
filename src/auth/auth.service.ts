@@ -26,11 +26,10 @@ export class AuthService {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const user = await this.userService.create({
-      uid: new mongoose.Types.ObjectId().toHexString(),
       email,
       password: hashedPassword,
     });
-    const token = this.jwtService.sign({ email: user.email, id: user.uid });
+    const token = this.jwtService.sign({ email: user.email, id: user._id });
     return { user, token };
   }
 
@@ -43,7 +42,11 @@ export class AuthService {
     if (!isMatch) {
       throw new BadRequestException('Incorrect password');
     }
-    const token = this.jwtService.sign({ email: user.email, id: user.uid });
+    const token = this.jwtService.sign({
+      email: user.email,
+      id: user._id,
+      role: user.role,
+    });
     return { user, token };
   }
 
@@ -52,7 +55,9 @@ export class AuthService {
       // Verify Firebase token
       const decodedToken = await firebaseAuth.verifyIdToken(idToken);
       // Find or create user
-      return await this.userService.findOrCreateUser(decodedToken);
+      const user = await this.userService.findOrCreateUser(decodedToken);
+
+      user._id.toString();
     } catch (error) {
       throw new HttpException(
         'Invalid or expired Firebase ID token',

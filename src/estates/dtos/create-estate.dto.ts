@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateEstateDto {
   @ApiProperty({ example: 'Unity Estate', description: 'Name of the estate' })
@@ -7,6 +8,7 @@ export class CreateEstateDto {
   name: string;
 
   @ApiProperty({ example: '12345', description: 'Owner ID of the estate' })
-  @IsString()
-  ownerId: string;
+  @IsNotEmpty()
+  @IsMongoId()
+  ownerId: Types.ObjectId;
 }

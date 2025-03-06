@@ -11,11 +11,7 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
-  async create(userData: {
-    uid: string;
-    email: string;
-    password: string;
-  }): Promise<User> {
+  async create(userData: { email: string; password: string }): Promise<User> {
     return this.usersRepository.create(userData);
   }
 
@@ -32,7 +28,7 @@ export class UsersService {
     oldPassword: string,
     newPassword: string,
   ): Promise<string> {
-    const user = await this.usersRepository.findByUid(id);
+    const user = await this.usersRepository.findById(id);
     if (!user) {
       throw new BadRequestException('User not found');
     }
@@ -44,5 +40,14 @@ export class UsersService {
     // Update password
     await this.usersRepository.updatePassword(id, newPassword);
     return 'Password changed successfully';
+  }
+
+  async promoteToAdmin(email: string) {
+    const user = await this.usersRepository.find(email);
+    if (!user) throw new NotFoundException('User not found');
+
+    user.role = 'admin';
+    await user.save();
+    return user;
   }
 }

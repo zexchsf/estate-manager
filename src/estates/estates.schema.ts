@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
-export type UserDocument = Estate & Document;
+export type EstateDocument = Estate & Document;
 
 @Schema()
 export class Estate {
@@ -11,11 +11,14 @@ export class Estate {
   @Prop({ default: 10 }) // Free up to 10 members
   freeMemberLimit: number;
 
-  @Prop({ default: [] })
-  residents: string[]; // Array of user IDs
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
+  residents: Types.ObjectId[]; // Array of user IDs
 
-  @Prop({ required: true })
-  ownerId: string; // Manager who created estate
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  ownerId: Types.ObjectId; // Manager who created estate
+
+  @Prop({ required: false }) // Optional location
+  location?: string;
 }
 
 export const EstateSchema = SchemaFactory.createForClass(Estate);
