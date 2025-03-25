@@ -9,14 +9,15 @@ import { firebaseAuth } from './firebase-admin';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import mongoose from 'mongoose';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
-  ) {}
+    private configService: ConfigService,
+  ) { }
 
   async signup(email: string, password: string) {
     const existingUser = await this.userService.find(email);
@@ -38,16 +39,34 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password || '');
     if (!isMatch) {
       throw new BadRequestException('Incorrect password');
     }
-    const token = this.jwtService.sign({
+    const access_token = this.jwtService.sign({
       email: user.email,
       id: user._id,
       role: user.role,
     });
-    return { user, token };
+    const refresh_token = this.jwtService.sign(
+      {
+        email: user.email,
+        id: user._id,
+        role: user.role,
+      },
+      {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        expiresIn: '30d',
+      },
+    );
+
+    return {
+      user,
+      tokens: {
+        access_token,
+        refresh_token,
+      },
+    };
   }
 
   async verifyFirebaseToken(idToken: string) {
@@ -57,7 +76,7 @@ export class AuthService {
       // Find or create user
       const user = await this.userService.findOrCreateUser(decodedToken);
 
-      user._id.toString();
+      return { user}
     } catch (error) {
       throw new HttpException(
         'Invalid or expired Firebase ID token',

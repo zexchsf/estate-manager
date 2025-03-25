@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { User } from './users.schema';
+import { User, UserDocument } from './users.schema';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class UsersService {
     return this.usersRepository.create(userData);
   }
 
-  async find(email: string): Promise<User | null> {
+  async find(email: string): Promise<UserDocument | null> {
     return this.usersRepository.find(email);
   }
 
@@ -33,7 +33,7 @@ export class UsersService {
       throw new BadRequestException('User not found');
     }
     // Compare old password
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    const isMatch = await bcrypt.compare(oldPassword, user.password || "");
     if (!isMatch) {
       throw new BadRequestException('Old password is incorrect');
     }

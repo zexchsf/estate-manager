@@ -3,7 +3,9 @@ import { Document, Types } from 'mongoose';
 
 export type EstateDocument = Estate & Document;
 
-@Schema()
+@Schema({
+  timestamps: true
+})
 export class Estate {
   @Prop({ required: true, unique: true })
   name: string;

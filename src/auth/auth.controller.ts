@@ -23,7 +23,7 @@ import {
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('email-signup')
   @ApiOperation({ summary: 'Sign up with email and password' })
@@ -44,12 +44,11 @@ export class AuthController {
     @Body() emailPasswordLoginDto: EmailPasswordLoginDto,
     @Res() res: Response,
   ) {
-    const { user, token } = await this.authService.signin(
+    const data = await this.authService.signin(
       emailPasswordLoginDto.email,
       emailPasswordLoginDto.password,
     );
-    res.cookie('jwt', token, { httpOnly: true, secure: true });
-    return res.send({ success: true, user });
+    return res.send({ success: true, data });
   }
 
   @Post('google-auth')

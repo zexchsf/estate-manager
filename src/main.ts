@@ -1,21 +1,29 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
-
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   // Enable cookie parsing
   app.use(cookieParser());
+  app.enableShutdownHooks();
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3400',
     credentials: true,
   });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
+
   // Debug MongoDB connection
   mongoose.connection.on('error', (err) => {
     console.error('MongoDB Connection Error:', err);

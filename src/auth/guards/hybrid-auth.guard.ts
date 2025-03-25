@@ -34,7 +34,7 @@ export class HybridAuthGuard implements CanActivate {
         // Fetch or create the user in MongoDB
         const user = await this.userService.findOrCreateUser(decodedUser);
         req.user = {
-          id: user._id.toString(),
+          id: user.id,
           email: user.email,
           role: user.role,
         };

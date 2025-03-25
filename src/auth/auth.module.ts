@@ -5,6 +5,8 @@ import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from 'src/users/users.module';
 import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { JwtModule } from '@nestjs/jwt';
     PassportModule.register({ defaultStrategy: 'firebase' }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, FirebaseAuthGuard],
+  providers: [AuthService, FirebaseAuthGuard, JwtStrategy, JwtAuthGuard],
   exports: [PassportModule, JwtModule],
 })
 export class AuthModule {}
